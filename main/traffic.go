@@ -154,6 +154,14 @@ var seenTraffic map[uint32]bool // Historical list of all ICAO addresses seen.
 
 var OwnshipTrafficInfo TrafficInfo
 
+func convertFeetToMeters(feet float32) float32 {
+	return feet * 0.3048
+}
+
+func convertMetersToFeet(meters float32) float32 {
+	return meters / 0.3048
+}
+
 func cleanupOldEntries() {
 	for icao_addr, ti := range traffic {
 		if stratuxClock.Since(ti.Last_seen) > 60*time.Second { // keep it in the database for up to 60 seconds, so we don't lose tail number, etc...
@@ -233,6 +241,16 @@ func sendTrafficUpdates() {
 					msgs = append(msgs, make([]byte, 0))
 				}
 				msgs[cur_n] = append(msgs[cur_n], makeTrafficReportMsg(ti)...)
+				
+				var trafficCallsign string
+				if len(ti.Tail) > 0 {
+					trafficCallsign = ti.Tail
+				} else {
+					trafficCallsign = fmt.Sprintf("%X_%d", ti.Icao_addr, ti.Squawk)
+				}
+
+				// send traffic message to X-Plane
+				sendXPlane(createXPlaneTrafficMsg(ti.Icao_addr, ti.Lat, ti.Lng, ti.Alt, uint32(ti.Speed), int32(ti.Vvel), ti.OnGround, uint32(ti.Track), trafficCallsign), false)
 			}
 		}
 	}
