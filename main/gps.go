@@ -1850,10 +1850,9 @@ func gpsSerialReader() {
 	return
 }
 
-func makeFFAHRSSimReport() {
-	s := fmt.Sprintf("XATTStratux,%f,%f,%f", mySituation.AHRSGyroHeading, mySituation.AHRSPitch, mySituation.AHRSRoll)
-
-	sendMsg([]byte(s), NETWORK_AHRS_FFSIM, false)
+func makeAHRSSimReport() {
+	sendXPlane(createXPlaneAttitudeMsg(float32(mySituation.AHRSGyroHeading), float32(mySituation.AHRSPitch), float32(mySituation.AHRSRoll)), false)
+	
 }
 
 /*
