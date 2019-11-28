@@ -311,7 +311,8 @@ func sensorAttitudeSender() {
 			mySituation.muAttitude.Unlock()
 
 			makeAHRSGDL90Report() // Send whether or not valid - the function will invalidate the values as appropriate
-
+			makeAHRSSimReport()
+			
 			// Send to AHRS debugging server.
 			if ahrswebListener != nil {
 				if err = ahrswebListener.Send(s.GetState(), m); err != nil {
