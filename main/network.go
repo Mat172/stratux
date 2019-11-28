@@ -69,6 +69,7 @@ const (
 	NETWORK_GDL90_STANDARD = 1
 	NETWORK_AHRS_FFSIM     = 2
 	NETWORK_AHRS_GDL90     = 4
+	NETWORK_POSITION_FFSIM = 8
 	dhcp_lease_file        = "/var/lib/dhcp/dhcpd.leases"
 	dhcp_lease_dir         = "/var/lib/dhcp"
 	extra_hosts_file       = "/etc/stratux-static-hosts.conf"
@@ -454,6 +455,9 @@ func messageQueueSender() {
 
 func sendMsg(msg []byte, msgType uint8, queueable bool) {
 	messageQueue <- networkMessage{msg: msg, msgType: msgType, queueable: queueable, ts: stratuxClock.Time}
+}
+func sendXPlane(msg []byte, queueable bool) {
+	sendMsg(msg, NETWORK_POSITION_FFSIM, queueable)
 }
 
 func sendGDL90(msg []byte, queueable bool) {
